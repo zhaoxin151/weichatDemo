@@ -1,66 +1,31 @@
-// pages/system/system.js
+var wxService = require("../../common/js/wx.js");
+var constant = require("../../common/js/constant.js");
+var app = getApp();
 Page({
-
-  /**
-   * 页面的初始数据
-   */
-  data: {
-  
+  clearCache: function () {
+    wxService.clearStorage();
+    this.onLoad();
   },
-
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function (options) {
-  
+  changeModel: function () {//修改用户的考试车型
+    var context = this;
+    wx.showActionSheet({
+      itemList: constant.models,
+      success: function (result) {
+        _fn.changeModelSuccess(result, context);
+      }
+    });
   },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-  
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-  
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-  
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-  
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-  
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-  
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-  
+});
+var _fn = {
+  changeModelSuccess: function (result, context) {
+    if (result.cancel) {
+      return;
+    } else {
+      var userSelectIndex = result.tapIndex;
+      var selectModel = constant.models[userSelectIndex];
+      wxService.setStorage(constant.storageKey.userModel, selectModel);
+      var userModel = wxService.getStorage(constant.storageKey.userModel);
+      context.setData({ userModel: userModel });
+    }
   }
-})
+};
